@@ -1,10 +1,6 @@
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
 
 export function renderImages(images) {
   const galleryContainer = document.querySelector('.gallery');
-
-  galleryContainer.innerHTML = '';
 
   images.forEach(image => {
     const imageCard = document.createElement('div');
@@ -46,11 +42,4 @@ export function renderImages(images) {
 
     galleryContainer.appendChild(imageCard);
   });
-
-  refreshGallery();
-}
-
-function refreshGallery() {
-  const gallery = new SimpleLightbox('.gallery-item');
-  gallery.refresh();
 }
