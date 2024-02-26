@@ -1,11 +1,12 @@
 
 import { renderImages } from './render-functions';
 
-export async function submitSearch(gallery) {
-  const searchInput = document.querySelector('.searchInput');
+const searchInput = document.querySelector('.searchInput');
+const loader = document.querySelector('.loader');
+const galleryContainer = document.querySelector('.gallery');
+
+export async function submitSearch() {
   const query = searchInput.value.trim();
-  const loader = document.querySelector('.loader');
-  const galleryContainer = document.querySelector('.gallery');
 
   if (query === '') {
     iziToast.show({
@@ -25,6 +26,8 @@ export async function submitSearch(gallery) {
   try {
     const response = await fetch(apiUrl);
 
+    loader.style.display = 'none';
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -35,8 +38,7 @@ export async function submitSearch(gallery) {
       iziToast.error({
         color: '#fafafb',
         backgroundColor: '#ef4040',
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
+        message: 'Sorry, there are no images matching your search query. Please try again!',
       });
     } else {
       renderImages(data.hits);
@@ -47,8 +49,5 @@ export async function submitSearch(gallery) {
       title: 'Error!',
       message: `An error occurred while fetching data: ${error.message}. Please try again later.`,
     });
-  } finally {
-    loader.style.display = 'none';
-    gallery.refresh();
   }
 }
