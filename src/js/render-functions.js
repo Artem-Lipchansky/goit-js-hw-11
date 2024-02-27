@@ -1,12 +1,11 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+const galleryContainer = document.querySelector('.gallery');
 const gallery = new SimpleLightbox('.gallery-item');
 
 export function renderImages(images) {
-  const galleryContainer = document.querySelector('.gallery');
-
-  galleryContainer.innerHTML = '';
+  const fragment = document.createDocumentFragment(); 
 
   images.forEach(image => {
     const imageCard = document.createElement('div');
@@ -14,7 +13,6 @@ export function renderImages(images) {
 
     const webformatURL = image.webformatURL;
     const largeImageURL = image.largeImageURL;
-    const tags = image.tags;
     const likes = image.likes;
     const views = image.views;
     const comments = image.comments;
@@ -45,9 +43,11 @@ export function renderImages(images) {
     linkElement.appendChild(infoElement);
 
     imageCard.appendChild(linkElement);
-
-    galleryContainer.appendChild(imageCard);
+    fragment.appendChild(imageCard); 
   });
+
+  galleryContainer.innerHTML = '';
+  galleryContainer.appendChild(fragment); 
 
   refreshGallery();
 }
