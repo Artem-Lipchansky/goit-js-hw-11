@@ -1,18 +1,16 @@
 
-import { renderImages } from './render-functions';
 
-const searchInput = document.querySelector('.searchInput');
-const loader = document.querySelector('.loader');
-const galleryContainer = document.querySelector('.gallery');
+
+import { renderImages, showError } from './render-functions';
 
 export async function submitSearch() {
+  const searchInput = document.querySelector('.searchInput');
   const query = searchInput.value.trim();
+  const loader = document.querySelector('.loader');
+  const galleryContainer = document.querySelector('.gallery');
 
   if (query === '') {
-    iziToast.show({
-      message: 'Please enter a keyword',
-      backgroundColor: 'yellow',
-    });
+    showError('Please enter a keyword');
     return Promise.reject('Empty query');
   }
 
@@ -26,8 +24,6 @@ export async function submitSearch() {
   try {
     const response = await fetch(apiUrl);
 
-    loader.style.display = 'none';
-
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -35,19 +31,12 @@ export async function submitSearch() {
     const data = await response.json();
 
     if (data.hits.length === 0) {
-      iziToast.error({
-        color: '#fafafb',
-        backgroundColor: '#ef4040',
-        message: 'Sorry, there are no images matching your search query. Please try again!',
-      });
+      showError('Sorry, there are no images matching your search query. Please try again!');
     } else {
       renderImages(data.hits);
     }
   } catch (error) {
     loader.style.display = 'none';
-    iziToast.error({
-      title: 'Error!',
-      message: `An error occurred while fetching data: ${error.message}. Please try again later.`,
-    });
+    showError(`An error occurred while fetching data: ${error.message}. Please try again later.`);
   }
 }

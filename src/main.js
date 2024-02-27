@@ -1,8 +1,5 @@
-
-
-
-import './js/render-functions';
 import { submitSearch } from './js/pixabay-api';
+import './js/render-functions';
 
 const searchForm = document.querySelector('.searchForm');
 

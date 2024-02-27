@@ -1,12 +1,17 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+const gallery = new SimpleLightbox('.gallery-item');
+
 export function renderImages(images) {
   const galleryContainer = document.querySelector('.gallery');
 
   galleryContainer.innerHTML = '';
 
-  const galleryContent = images.map(image => {
+  images.forEach(image => {
+    const imageCard = document.createElement('div');
+    imageCard.classList.add('image-card');
+
     const webformatURL = image.webformatURL;
     const largeImageURL = image.largeImageURL;
     const tags = image.tags;
@@ -15,27 +20,45 @@ export function renderImages(images) {
     const comments = image.comments;
     const downloads = image.downloads;
 
-    return `
-      <div class="image-card">
-        <a href="${largeImageURL}" class="gallery-item" style="text-decoration: none;">
-          <img src="${webformatURL}" alt="${tags}" class="img" style="width: 100%;">
-          <div class="image-info">
-            <p class="info-item">Likes:<br>${likes}</p>
-            <p class="info-item">Views:<br>${views}</p>
-            <p class="info-item">Comments:<br>${comments}</p>
-            <p class="info-item">Downloads:<br>${downloads}</p>
-          </div>
-        </a>
-      </div>
-    `;
-  });
+    const imageElement = document.createElement('img');
+    imageElement.classList.add('img');
+    imageElement.src = image.webformatURL;
+    imageElement.alt = image.tags;
+    imageElement.style.width = '100%';
 
-  galleryContainer.insertAdjacentHTML('beforeend', galleryContent.join(''));
+    const infoElement = document.createElement('div');
+    infoElement.classList.add('image-info');
+
+    infoElement.innerHTML = `
+      <p class="info-item">Likes:<br>${likes}</p>
+      <p class="info-item">Views:<br>${views}</p>
+      <p class="info-item">Comments:<br>${comments}</p>
+      <p class="info-item">Downloads:<br>${downloads}</p>
+    `;
+
+    const linkElement = document.createElement('a');
+    linkElement.href = largeImageURL;
+    linkElement.classList.add('gallery-item');
+    linkElement.style.textDecoration = 'none';
+
+    linkElement.appendChild(imageElement);
+    linkElement.appendChild(infoElement);
+
+    imageCard.appendChild(linkElement);
+
+    galleryContainer.appendChild(imageCard);
+  });
 
   refreshGallery();
 }
 
 function refreshGallery() {
-  const gallery = new SimpleLightbox('.gallery-item');
   gallery.refresh();
+}
+
+export function showError(message) {
+  iziToast.error({
+    title: 'Error!',
+    message: message,
+  });
 }
