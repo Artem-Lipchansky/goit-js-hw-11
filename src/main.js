@@ -1,9 +1,45 @@
-import { submitSearch } from './js/pixabay-api';
-import './js/render-functions';
+import { PixabayApi } from './js/pixabay-api';
+import { renderCards } from './js/render-functions';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
-const searchForm = document.querySelector('.searchForm');
+const pixabayApi = new PixabayApi();
+const form = document.querySelector('.search-form');
+const gallery = document.querySelector('.gallery');
+const loader = document.querySelector('.loader');
 
-searchForm.addEventListener('submit', function (event) {
+form.addEventListener('submit', onSearchSubmit);
+
+function onSearchSubmit(event) {
   event.preventDefault();
-  submitSearch();
-});
+  gallery.innerHTML = '';
+  toggleLoader();
+
+  pixabayApi
+    .getImages(event.target.query.value)
+    .then(data => {
+      const images = data.hits;
+      if (!images.length) {
+        throw new Error(
+          'Sorry, there are no images matching your search query. Please try again!'
+        );
+      }
+      renderCards(images);
+    })
+    .catch(error => showError(error))
+    .finally(toggleLoader);
+
+  event.target.reset();
+}
+
+function showError(error) {
+  iziToast.error({
+    pauseOnHover: false,
+    position: 'topRight',
+    message: error.message,
+  });
+}
+
+function toggleLoader() {
+  loader.classList.toggle('hidden');
+}

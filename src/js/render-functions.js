@@ -1,64 +1,37 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const galleryContainer = document.querySelector('.gallery');
-const gallery = new SimpleLightbox('.gallery-item');
+const gallery = document.querySelector('.gallery');
+const lightbox = new SimpleLightbox('.gallery a', {   captionsData: 'alt', captionDelay: 250 
+});
 
-export function renderImages(images) {
-  const fragment = document.createDocumentFragment(); 
-
-  images.forEach(image => {
-    const imageCard = document.createElement('div');
-    imageCard.classList.add('image-card');
-
-    const webformatURL = image.webformatURL;
-    const largeImageURL = image.largeImageURL;
-    const likes = image.likes;
-    const views = image.views;
-    const comments = image.comments;
-    const downloads = image.downloads;
-
-    const imageElement = document.createElement('img');
-    imageElement.classList.add('img');
-    imageElement.src = image.webformatURL;
-    imageElement.alt = image.tags;
-    imageElement.style.width = '100%';
-
-    const infoElement = document.createElement('div');
-    infoElement.classList.add('image-info');
-
-    infoElement.innerHTML = `
-      <p class="info-item">Likes:<br>${likes}</p>
-      <p class="info-item">Views:<br>${views}</p>
-      <p class="info-item">Comments:<br>${comments}</p>
-      <p class="info-item">Downloads:<br>${downloads}</p>
-    `;
-
-    const linkElement = document.createElement('a');
-    linkElement.href = largeImageURL;
-    linkElement.classList.add('gallery-item');
-    linkElement.style.textDecoration = 'none';
-
-    linkElement.appendChild(imageElement);
-    linkElement.appendChild(infoElement);
-
-    imageCard.appendChild(linkElement);
-    fragment.appendChild(imageCard); 
-  });
-
-  galleryContainer.innerHTML = '';
-  galleryContainer.appendChild(fragment); 
-
-  refreshGallery();
+function templateCard({
+  webformatURL,
+  largeImageURL,
+  tags,
+  likes,
+  views,
+  comments,
+  downloads,
+}) {
+  return `      
+      <li class="card">
+        <a href ="${largeImageURL}">
+        <img class="card-img" src="${webformatURL}" alt="${tags}" >
+        <ul class="card-data">
+          <li><h3>Likes</h3><p>${likes}</p></li>
+          <li><h3>Views</h3><p>${views}</p></li>
+          <li><h3>Comments</h3><p>${comments}</p></li>
+          <li><h3>Downloads</h3><p>${downloads}</p></li>
+        </ul>
+      </li>`;
 }
 
-function refreshGallery() {
-  gallery.refresh();
+function templateCards(images) {
+  return images.map(templateCard).join('');
 }
 
-export function showError(message) {
-  iziToast.error({
-    title: 'Error!',
-    message: message,
-  });
+export function renderCards(images) {
+  gallery.innerHTML = templateCards(images);
+  lightbox.refresh();
 }
