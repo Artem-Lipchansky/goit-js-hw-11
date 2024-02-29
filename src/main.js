@@ -15,8 +15,15 @@ function onSearchSubmit(event) {
   gallery.innerHTML = '';
   toggleLoader();
 
+  const queryValue = event.target.query.value.trim();
+  if (!queryValue) {
+    showError(new Error('Please enter a search query.'));
+    toggleLoader();
+    return;
+  }
+
   pixabayApi
-    .getImages(event.target.query.value)
+    .getImages(queryValue)
     .then(data => {
       const images = data.hits;
       if (!images.length) {
