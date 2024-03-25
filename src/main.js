@@ -22,6 +22,8 @@ function onSearchSubmit(event) {
     return;
   }
 
+  
+
   pixabayApi
     .getImages(queryValue)
     .then(data => {
